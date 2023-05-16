@@ -31,11 +31,13 @@ public class AddActivity extends AppCompatActivity {
         answer2 = findViewById(R.id.add_answer2);
         answer3 = findViewById(R.id.add_answer3);
         Database db = new Database(getApplicationContext(),"flashcard",null,1);
+
         cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(AddActivity.this, AddActivity.class);
                 finish();
+                overridePendingTransition(R.anim.back_left, R.anim.back_right);
             }
         });
 

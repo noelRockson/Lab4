@@ -4,17 +4,21 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -23,11 +27,13 @@ import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity {
 
     Button btn, btn2, btn3;
     ImageView add_btn,next_btn,del_btn;
-    TextView qtn_view,text_question;
+    TextView qtn_view,text_question,textCount;
     String qtn,ans1,ans2,ans3;
     int index = 0;
     int y;
@@ -36,6 +42,47 @@ public class MainActivity extends AppCompatActivity {
 
     //variable qui contiendra la liste des questions et reponses
     String[][] ListQtn = new String[1][4];
+
+    private static final long counter = 30000;
+    private ColorStateList textColorDefaultRb;
+    private ColorStateList getTextColorDefaultCd;
+    private CountDownTimer countDownTimer;
+    private long timeIsOver;
+
+
+    private void startCountDown() {
+        countDownTimer = new CountDownTimer(timeIsOver,1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timeIsOver = millisUntilFinished;
+                updateCountDownText();
+            }
+
+            @Override
+            public void onFinish() {
+                timeIsOver = 0;
+                updateCountDownText();
+
+            }
+        }.start();
+    }
+
+    private void updateCountDownText(){
+        int minutes = (int) ((timeIsOver/1000)/60);
+        int seconds = (int) ((timeIsOver/1000)%60);
+
+        String time = String.format(Locale.getDefault(),"%02d",seconds);
+        textCount.setText(time);
+
+        if(timeIsOver < 10000)
+        {
+            textCount.setTextColor(Color.RED);
+        }
+        else
+        {
+            textCount.setTextColor(getTextColorDefaultCd);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,15 +97,16 @@ public class MainActivity extends AppCompatActivity {
         next_btn = findViewById(R.id.ic_next);
         text_question = findViewById(R.id.text_question);
         del_btn = findViewById(R.id.ic_del);
+        textCount = findViewById(R.id.count);
+        getTextColorDefaultCd = textCount.getTextColors();
 
+        timeIsOver = counter;
+        startCountDown();
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                countDownTimer.cancel();
                 if (view.getId() == R.id.btn_answer2) {
-
-                    Log.i("Condition if", "bouton 2 :" + R.id.btn_answer2);
-
                     if(view.getId() == R.id.btn_answer2 )
                     {
                         btn2.setBackgroundColor(Color.parseColor("#FF0000"));
@@ -73,8 +121,7 @@ public class MainActivity extends AppCompatActivity {
         btn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("Tag", "bouton 3 clicked");
-
+                countDownTimer.cancel();
                 if(view.getId() == R.id.btn_answer3 )
                 {
                     btn3.setBackgroundColor(Color.parseColor("#FF0000"));
@@ -86,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("Tag", "bouton 1 clicked");
+                countDownTimer.cancel();
                 if(view.getId() == R.id.btn_answer1 )
                 {
                     btn.setBackgroundColor(Color.parseColor("#00FF00"));
@@ -99,10 +146,14 @@ public class MainActivity extends AppCompatActivity {
         add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddActivity.class);
-                    startActivity(intent);
+                countDownTimer.cancel();
+                Intent i = new Intent(new Intent(getApplicationContext(),AddActivity.class));
+                startActivity(i);
+                overridePendingTransition(R.anim.right_in, R.anim.left_out);
             }
         });
+
+
 
         next_btn.setOnClickListener(new View.OnClickListener() {
 
@@ -111,7 +162,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 y = db.lengthRow();
+                Animation slideOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out);
+                Animation slideInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in);
 
+                //Compteur pr repondre
+                timeIsOver = counter;
+                startCountDown();
                 //Condition pour eviter que l'app plante quand il n'y a plus de ligne a lire dans la BD
                 if(index < db.lengthRow()){
 
@@ -128,6 +184,14 @@ public class MainActivity extends AppCompatActivity {
                     btn.setText(ListQtn[0][1]);
                     btn2.setText(ListQtn[0][2]);
                     btn3.setText(ListQtn[0][3]);
+
+                    // Application de l'animation de sortie sur la vue actuelle
+                    text_question.startAnimation(slideOutAnimation);
+                    btn.startAnimation(slideOutAnimation);
+                    btn2.startAnimation(slideOutAnimation);
+                    btn3.startAnimation(slideOutAnimation);
+
+
 
                 }
                 else {
@@ -158,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                     next_btn.setVisibility(View.INVISIBLE);
                 }
 
-                //db.close();
+                db.close();
                 index++;
 
             }
@@ -172,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
                 Database db = new Database(getApplicationContext(),"flashcard",null,1);
                 Log.i("a","index "+index);
                 db.delete(index);
-
+                Toast.makeText(MainActivity.this, "Suppression reussie", Toast.LENGTH_SHORT).show();
                 y = db.lengthRow();
 
 //                Log.i("","index : "+index);
@@ -229,7 +293,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(countDownTimer !=null )
+        {
+            countDownTimer.cancel();
+        }
+    }
 }

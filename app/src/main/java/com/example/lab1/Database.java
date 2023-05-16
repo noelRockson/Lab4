@@ -136,7 +136,7 @@ public class Database extends SQLiteOpenHelper {
 
        }
 
-       db.close();
+       //db.close();
         return quiz;
     }
 
@@ -149,9 +149,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(deleteQuery);
 
 
-       db.close();
-
-
+       //db.close();
     }
 }
 
