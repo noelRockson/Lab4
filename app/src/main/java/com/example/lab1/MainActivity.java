@@ -12,6 +12,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -25,6 +26,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.widget.ImageView;
+import androidx.appcompat.app.AppCompatActivity;
+import pl.droidsonroids.gif.GifDrawable;
+
+
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Locale;
@@ -32,13 +40,16 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     Button btn, btn2, btn3;
-    ImageView add_btn,next_btn,del_btn;
+    ImageView add_btn,next_btn,del_btn,gifImageView;
     TextView qtn_view,text_question,textCount;
     String qtn,ans1,ans2,ans3;
     int index = 0;
     int y;
     String row = String.valueOf(index);
     String[][] lastQtn = new String[1][4];
+
+    private Handler handler;
+    private GifDrawable gifDrawable;
 
     //variable qui contiendra la liste des questions et reponses
     String[][] ListQtn = new String[1][4];
@@ -84,6 +95,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void loadGifAnimation() {
+        try {
+            // Load the GIF animation from the raw resource
+            GifDrawable gifDrawable = new GifDrawable(getResources(), R.raw.confetti);
+
+            // Set the GIF drawable to the ImageView
+            gifImageView.setImageDrawable(gifDrawable);
+
+            // Start the animation
+            gifDrawable.start();
+
+
+            // Stop the animation after 5 seconds (adjust the delay as needed)
+            handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //stopGifAnimation();
+                    gifImageView.setVisibility(View.INVISIBLE);
+                }
+            }, 2000); // 5 seconds
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,13 +138,17 @@ public class MainActivity extends AppCompatActivity {
         del_btn = findViewById(R.id.ic_del);
         textCount = findViewById(R.id.count);
         getTextColorDefaultCd = textCount.getTextColors();
+        gifImageView = findViewById(R.id.gif_image_view);
 
+        //Compteur
         timeIsOver = counter;
         startCountDown();
+
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 countDownTimer.cancel();
+                loadGifAnimation();
                 if (view.getId() == R.id.btn_answer2) {
                     if(view.getId() == R.id.btn_answer2 )
                     {
@@ -164,6 +207,12 @@ public class MainActivity extends AppCompatActivity {
                 y = db.lengthRow();
                 Animation slideOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_out);
                 Animation slideInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in);
+
+
+                //reinistialiser la couleur des boutons
+                btn.setBackgroundColor(Color.parseColor("#FFBB86FC"));
+                btn2.setBackgroundColor(Color.parseColor("#FFBB86FC"));
+                btn3.setBackgroundColor(Color.parseColor("#FFBB86FC"));
 
                 //Compteur pr repondre
                 timeIsOver = counter;
@@ -301,6 +350,10 @@ public class MainActivity extends AppCompatActivity {
         if(countDownTimer !=null )
         {
             countDownTimer.cancel();
+        }
+
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
         }
     }
 }
