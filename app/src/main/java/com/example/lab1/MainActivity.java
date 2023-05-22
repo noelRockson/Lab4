@@ -216,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //Compteur pr repondre
                 timeIsOver = counter;
+                countDownTimer.cancel();
                 startCountDown();
                 //Condition pour eviter que l'app plante quand il n'y a plus de ligne a lire dans la BD
                 if(index < db.lengthRow()){
@@ -239,8 +240,6 @@ public class MainActivity extends AppCompatActivity {
                     btn.startAnimation(slideOutAnimation);
                     btn2.startAnimation(slideOutAnimation);
                     btn3.startAnimation(slideOutAnimation);
-
-
 
                 }
                 else {
@@ -287,9 +286,6 @@ public class MainActivity extends AppCompatActivity {
                 db.delete(index);
                 Toast.makeText(MainActivity.this, "Suppression reussie", Toast.LENGTH_SHORT).show();
                 y = db.lengthRow();
-
-//                Log.i("","index : "+index);
-//                Log.i("","index y : "+y);
 
                 //Condition pour afficher la ligne suivante quand on supprime un ligne
                 if(index < y){
