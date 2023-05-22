@@ -8,9 +8,12 @@ Transition animation when the app goes from MainActivity to AddCardActivity
 <img src="https://github.com/noelRockson/Lab4/blob/master/Lab4-1.gif" width=200><br>
 
 ### App Walk-though
-Replace the answer 'reveal' animation with a 'card flip' animation and Adding a celebration animation if the user answers the question correctly.
-<img src="https://github.com/noelRockson/Lab4/blob/master/Lab4.gif" width=200><br>
+Adding a sliding animation for when the user advances to the next card.
+<img src="https://github.com/noelRockson/Lab4/blob/master/lab4-2.gif" width=200><br>
 
+### App Walk-though
+Adding a celebration animation if the user answers the question correctly.
+<img src="https://github.com/noelRockson/Lab4/blob/master/Lab4.gif" width=200><br>
 
 ## Required
 - [x] User sees a transition animation when going from the main screen to the add card screen.
