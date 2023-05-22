@@ -1,16 +1,11 @@
-📝 `NOTE` Paste this template at the top of your existing `README.md` file from the last lab.
-
 ## Lab 4
 
 ### App Description
 `TODO://` Add app description
 
 ### App Walk-though
-`TODO://` Add the URL to your animated app walk-though `gif` in the image tag below. Make sure the gif actually renders and animates when viewing this README. (☝️ Remove this paragraph after after adding gif)
-
-<img src="YOUR_GIF_URL_HERE" width=200><br>
-
-`TODO://` In the User stories section below, add an `x` between the `-[ ]` like this `- [x]` for any user story you complete. (☝️ Remove this paragraph after after checking off user stories)
+Transition animation when the app goes from MainActivity to AddCardActivity
+<img src="https://github.com/noelRockson/Lab4/blob/master/Lab4-1.gif" width=200><br>
 
 ## Required
 - [x] User sees a transition animation when going from the main screen to the add card screen.
